@@ -1,18 +1,36 @@
-//import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import video from './food.mp4';
+import MyRecipesKomponent from './MyRecipesKomponent'
+
 //https://api.edamam.com/api/recipes/v2?type=public&q=cocktail&app_id=7f05e9a1&app_key=9d711c11df64e5935baca9496984fd61
 function App() {
+
   const MY_ID = "7f05e9a1";
   const MY_KEY = "9d711c11df64e5935baca9496984fd61";
+  const [mySearch, setMySearch] = useState("");
+  const [myRecipe, setMyRecipe] = useState([]);
+  const [wordSubmitted, setWordSubmitted] = useState("avocado")
+
   useEffect(() => {
     const getRecipe = async()=> {
-      const response = await fetch('https://api.edamam.com/api/recipes/v2?type=public&q=cocktail&app_id=`${MY_ID}`&app_key=`${MY_KEY}`');
+      const response = await fetch(`https://api.edamam.com/api/recipes/v2?type=public&q=${wordSubmitted}&app_id=${MY_ID}&app_key=${MY_KEY}`);
       const data = await response.json();
-      console.log(data);
+      console.log(data.hits);
+      setMyRecipe(data.hits);
     }
     getRecipe()
-  }, [])
+  }, [wordSubmitted])
+
+  const myRecipeSearch = (e) => {
+    console.log(e.target.value);
+    setMySearch(e.target.value)
+  }
+
+  const finalSearch = (e) => {
+    e.preventDefault();
+    setWordSubmitted(mySearch);
+  }
   return (
     <div className="App">
       <div className="container"> 
@@ -22,15 +40,22 @@ function App() {
       <h1>Find a Recipe</h1>
     </div>
     <div className="container">
-      <form>
-        <input/>
+      <form onSubmit={finalSearch}>
+        <input className="search" placeholder="Search..." onChange={myRecipeSearch} value={mySearch}/>
       </form>
     </div>
     <div className="container">
-      <button> 
+      <button onClick={finalSearch}> 
         <img src="https://img.icons8.com/fluency/48/000000/fry.png" alt="icon"/>
       </button>
     </div>
+    {myRecipe.map((element, index)  => (
+      <MyRecipesKomponent key={index}
+      label={element.recipe.label} 
+      image={element.recipe.image}
+      calories={element.recipe.calories}
+      ingredients={element.recipe.ingredientLines}/>
+    ))}
     </div>
   );
 }
