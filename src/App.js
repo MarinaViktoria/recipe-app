@@ -3,7 +3,6 @@ import './App.css';
 import video from './food.mp4';
 import MyRecipesKomponent from './MyRecipesKomponent'
 
-//https://api.edamam.com/api/recipes/v2?type=public&q=cocktail&app_id=7f05e9a1&app_key=9d711c11df64e5935baca9496984fd61
 function App() {
 
   const MY_ID = "7f05e9a1";
@@ -16,14 +15,12 @@ function App() {
     const getRecipe = async()=> {
       const response = await fetch(`https://api.edamam.com/api/recipes/v2?type=public&q=${wordSubmitted}&app_id=${MY_ID}&app_key=${MY_KEY}`);
       const data = await response.json();
-      console.log(data.hits);
       setMyRecipe(data.hits);
     }
     getRecipe()
   }, [wordSubmitted])
 
   const myRecipeSearch = (e) => {
-    console.log(e.target.value);
     setMySearch(e.target.value)
   }
 
